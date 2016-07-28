@@ -47,7 +47,7 @@ init:
 	ld	a, %11100100 	; Window palette colors, from darkest to lightest
 	ld	[rBGP], a		; CLEAR THE SCREEN
 
-	ld	a,0			; SET SCREEN TO TO UPPER RIGHT HAND CORNER
+	ld	a,$10			; SET SCREEN TO TO UPPER RIGHT HAND CORNER
 	ld	[rSCX], a
 	ld	[rSCY], a		
 	call	StopLCD		; YOU CAN NOT LOAD $8000 WITH LCD ON
@@ -83,7 +83,7 @@ wait:
 ; hard-coded data
 ; ****************************************************************************************
 Title:
-	DB	"Hello World !"
+	DB	"Hellool World !"
 TitleEnd:
 
 ; ****************************************************************************************
