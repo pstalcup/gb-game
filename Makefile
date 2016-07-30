@@ -1,11 +1,13 @@
 build: asm link fix
 asm:
-	rgbasm -v -o hello.o hello.asm
+	rgbasm -v -o game.o game.asm
 link: 
-	rgblink -o hello.gb hello.o
+	rgblink -o game.gb game.o
 fix:
-	rgbfix -v hello.gb
+	rgbfix -v game.gb
 clean:
-	rm hello.o hello.gb
-push:
-	cp hello.gb "/Volumes/Heaps Cart/"
+	rm game.o game.gb
+push: build
+	cp game.gb "/Volumes/Heaps Cart/"
+launch: build
+	wine ../bgb/bgb.exe game.gb
