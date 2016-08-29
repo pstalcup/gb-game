@@ -30,7 +30,7 @@ begin:
 	ld [rBGP], a
 	ld [rOBP0], a
 ; set window location
-	ld a, 8
+	ld a, 16
 	ld [rSCX], a
 	ld a, 16
 	ld [rSCY], a
@@ -50,7 +50,7 @@ begin:
 	res 7, a
 	ld [rLCDC], a	
 ; init tile data
-	ld b, 16
+	ld b, 32
 	ld hl, $8000
 	ld de, sprite_tile
 .tile_load
@@ -61,8 +61,8 @@ begin:
 	dec b
 	jr nz, .tile_load
 ; init OAM
-	ld b, 4
-	ld hl, $FE00
+	ld b, 4 * enemy_sprite_count + 4
+	ld hl, $fe00
 	ld de, sprite_flag
 .oam_load
 	ld a, [de]
@@ -71,7 +71,7 @@ begin:
 	inc de
 	dec b
 	jr nz, .oam_load
-	ld b, 156; 4 * 39
+	ld b, 4 * 39; 4 * 39
 .oam_zero
 	ld [hl], 0
 	inc hl
@@ -107,35 +107,36 @@ main:
 .right:
 	bit 0, b
 	jr nz, .left
-	ld hl, $fe01
-	ld a, [hl]
-	inc a
-	ld [hl], a
+	ld hl, player_sprite_x
+	inc [hl]
 .left:
 	bit 1, b
 	jr nz, .up
-	ld hl, $fe01
-	ld a, [hl]
-	dec a
-	ld [hl], a
+	ld hl, player_sprite_x
+	dec [hl]
 .up:
 	bit 2, b
 	jr nz, .down 
-	ld hl, $fe00
-	ld a, [hl]
-	dec a
-	ld [hl], a
+	ld hl, player_sprite_y
+	dec [hl]
 .down:
 	bit 3, b
 	jr nz, .input_done
-	ld b, a
-	ld hl, $fe00
-	ld a, [hl]
-	inc a
-	ld [hl], a
+	ld hl, player_sprite_y
+	inc [hl]
 .input_done:
-	;ld a, $F1
-	;ld [rDMA], a
+.enemy_move:
+	ld hl, $fe04
+	ld b, 3
+.enemy_move_loop:
+	ld a, [hl]
+	add a, 4
+	ld [hl], a
+	ld a, 4
+	add l
+	ld l, a
+	dec b
+	jr nz, .enemy_move_loop
 	jp main
 
 sprite_flag:
@@ -147,6 +148,32 @@ sprite_flag:
 	DB $00
 	;sprite flags - default flags
 	DB %00000000
+enemy_flags:
+	; x position
+	DB $30
+	; y position
+	DB $30
+	; tile number
+	DB $01
+	;sprite flags - default flags
+	DB %00000000
+	; x position
+	DB $40
+	; y position
+	DB $40
+	; tile number
+	DB $01
+	;sprite flags - default flags
+	DB %00000000
+	; x position
+	DB $50
+	; y position
+	DB $50
+	; tile number
+	DB $01
+	;sprite flags - default flags
+	DB %00000000
+
 
 sprite_tile:
 	; raw tile data
@@ -167,3 +194,22 @@ sprite_tile:
 	DB %00111100 
 	DB %00111100
 	
+enemy_tile:
+	DB %00111100
+	DB %01111110
+	DB %00111100
+	DB %01111110
+	DB %00111100
+	DB %01111110
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
+	DB %00111100
